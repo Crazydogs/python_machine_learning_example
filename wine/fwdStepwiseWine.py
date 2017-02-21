@@ -17,6 +17,7 @@ def xattrSelect(x, idxSet):
     xout = []
     for row in x:
         xout.append([row[i] for i in idxSet])
+    return xout
         
 dataFile = open('wine.txt')
 wine = pandas.read_csv(dataFile, header=0, sep=';')
@@ -54,9 +55,33 @@ indexSeq = []
 oosError = []
 
 for i in index:
+    # 已经确定使用的特征
     attSet = set(attributeList)
+    # 待尝试的特征
     attTrySet = indexSet - attSet
     attTry = [ii for ii in attTrySet]
+
     errorList = []
     attTemp = []
     for iTry in attTry:
+        attTemp = [] + attributeList
+        attTemp.append(iTry)
+        # 抽取一个待测试属性和所有已确定属性
+        xTrainTemp = xattrSelect(xListTrain, attTemp)
+        xTestTemp = xattrSelect(xListTest, attTemp)
+        xTrain = numpy.array(xTrainTemp)
+        xTest = numpy.array(xTestTemp)
+        yTrain = numpy.array(labelsTrain)
+        yTest = numpy.array(labelsTest)
+        # 进行最小二乘法线性回归
+        wineQModel = linear_model.LinearRegression()
+        wineQModel.fit(xTrain, yTrain)
+        rmsError = numpy.linalg.norm((yTest - wineQModel.predict(xTest)), 2) / sqrt(len(yTest))
+        errorList.append(rmsError)
+        attTemp = []
+    iBest = numpy.argmin(errorList)
+    attributeList.append(attTry[iBest])
+    oosError.append(errorList[iBest])
+
+plt.plot(range(len(oosError)), oosError, 'k')
+plt.show()
