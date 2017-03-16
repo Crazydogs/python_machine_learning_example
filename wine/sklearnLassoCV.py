@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
-# 使用 sklearn 中的套索模型
+'使用 sklearn 中的套索模型'
 
 import pandas
 import numpy
@@ -36,6 +36,7 @@ for i in range(rows):
     labels.append(label)
 
 
+# 使用 10 折交叉验证
 X = numpy.array(xList)
 Y = numpy.array(labels)
 wineModel = LassoCV(cv=10).fit(X, Y)    # cv 为折数
@@ -56,3 +57,16 @@ plt.show()
 
 print u'使平均均方差最小的 alpha 为', wineModel.alpha_
 print u'最小均方差为', min(wineModel.mse_path_.mean(axis=-1))
+
+# 在全数据集进行训练
+alphas, coefs, _ = linear_model.lasso_path(X, Y, return_models=False)
+
+# 绘制系数随 alpha 值变化的趋势
+plt.plot(alphas, coefs.T)
+plt.xlabel('Alphas')
+plt.ylabel('Coefficients')
+plt.axis('tight')
+plt.semilogx()      # x 坐标用对数显示
+ax = plt.gca()
+ax.invert_xaxis()   # 翻转 x 轴
+plt.show()
