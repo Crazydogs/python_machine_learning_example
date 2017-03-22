@@ -15,7 +15,7 @@ dataFile = open('wine.txt')
 wine = pandas.read_csv(dataFile, header=0, sep=';')
 print(wine.describe())
 
-# 归一化数据
+# 归一化数据 归一化公式为 (val - mean(x)) / std(x)
 scaledWine = preprocessing.scale(wine)
 df = pandas.DataFrame(scaledWine)
 print(df.describe())
