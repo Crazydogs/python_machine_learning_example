@@ -49,3 +49,12 @@ plot.legend(loc="upper right")
 plot.xlabel(u'决策树数量')
 plot.ylabel(u'均方差(MSE)')
 plot.show()
+
+featureImportance = wineGBMModel.feature_importances_
+featureImportance = featureImportance / featureImportance.max()
+idxSorted = numpy.argsort(featureImportance)
+barPos = numpy.arange(idxSorted.shape[0]) + .5
+plot.barh(barPos, featureImportance[idxSorted], align="center")
+plot.yticks(barPos, names[idxSorted])
+plot.xlabel(u"属性权重")
+plot.show()
